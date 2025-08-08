@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option go_package = "github.com/barathsurya2004/expenses/proto";
+
+service ExpensesService {
+  rpc CreateExpense(stream CreateExpenseRequest) returns (CreateExpenseResponse);
+}
+
+message CreateExpenseRequest {
+  bytes chunks = 1;
+}
+
+message CreateExpenseResponse {
+  string status = 1;
+}
