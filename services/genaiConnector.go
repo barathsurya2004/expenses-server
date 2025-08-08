@@ -19,12 +19,12 @@ const (
 )
 
 // server implements the gRPC ExpensesServiceServer interface.
-type server struct {
+type expenseServer struct {
 	pb.UnimplementedExpensesServiceServer
 }
 
 // CreateExpense is a client-streaming RPC that receives an image and processes it.
-func (s *server) CreateExpense(stream pb.ExpensesService_CreateExpenseServer) error {
+func (s *expenseServer) CreateExpense(stream pb.ExpensesService_CreateExpenseServer) error {
 	log.Println("Receiving image chunks from client...")
 
 	var imageBytes []byte

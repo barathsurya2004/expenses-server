@@ -1,1 +1,4 @@
 .env
+
+# anything which is inside bin folder should be ignored
+**/bin/

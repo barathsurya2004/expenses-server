@@ -3,7 +3,9 @@ module github.com/barathsurya2004/expenses
 go 1.24.5
 
 require (
+	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
+	github.com/lib/pq v1.10.9
 	google.golang.org/genai v1.19.0
 	google.golang.org/grpc v1.74.2
 	google.golang.org/protobuf v1.36.7

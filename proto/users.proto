@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+option go_package= "github.com/barathsurya2004/expenses/proto";
+
+service UsersService {
+    rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+    rpc GetUser(GetUserRequest) returns (GetUserResponse);
+}
+
+message CreateUserRequest {
+    string username =1 ;
+    string email = 2;
+    string firstName = 3;
+    string lastName = 4;
+    string password = 5;
+}
+
+
+message CreateUserResponse {
+    string userId = 1;
+    string message = 2;
+}
+
+message GetUserRequest {
+    string userId = 1;
+}
+
+message GetUserResponse {
+    string userId = 1;
+    string username = 2;
+    string email = 3;
+    string firstName = 4;
+    string lastName = 5;
+}
