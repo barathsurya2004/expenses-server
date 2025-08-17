@@ -35,7 +35,9 @@ func main() {
 	}
 	defer dbConn.Close()
 	s := grpc.NewServer()
-	pb.RegisterExpensesServiceServer(s, &expenseServer{})
+	pb.RegisterExpensesServiceServer(s, &expenseServer{
+		db: dbConn,
+	})
 	pb.RegisterUsersServiceServer(s, &usersServer{
 		db: dbConn,
 	})

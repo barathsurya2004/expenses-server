@@ -6,7 +6,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"strings"
 
 	"github.com/gorilla/mux"
 	"google.golang.org/grpc"
@@ -160,13 +159,6 @@ func (s *server) CreateExpense(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to receive response", http.StatusInternalServerError)
 		return
 	}
-	fmt.Println(response.GetStatus())
-
-	jsonParsed := strings.Replace(response.GetStatus(), "```json\n", "", -1)
-	jsonParsed = strings.Replace(jsonParsed, "```", "", -1)
-	jsonParsed = strings.TrimSpace(jsonParsed)
-	fmt.Println(jsonParsed)
-
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, jsonParsed)
+	fmt.Fprint(w, response.GetStatus())
 }
