@@ -22,14 +22,11 @@ message CreateUserResponse {
 }
 
 message GetUserRequest {
-    string userId = 1;
+    string username = 1;
     string password = 2;
 }
 
 message GetUserResponse {
-    string userId = 1;
-    string username = 2;
-    string email = 3;
-    string firstName = 4;
-    string lastName = 5;
+    string AuthToken = 1;
+    string userId = 2;
 }

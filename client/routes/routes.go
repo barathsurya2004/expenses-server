@@ -38,7 +38,7 @@ func (s *Server) GetUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res, err := pClient.GetUser(ctx, &pb.GetUserRequest{
-		UserId:   req.UserId,
+		Username: req.Username,
 		Password: req.Password,
 	})
 	if err != nil {
@@ -48,8 +48,9 @@ func (s *Server) GetUser(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 
-	fmt.Fprintf(w, `{"user_id": "%s", "username": "%s", "email": "%s", "first_name": "%s", "last_name": "%s"}`,
-		res.GetUserId(), res.GetUsername(), res.GetEmail(), res.GetFirstName(), res.GetLastName())
+	fmt.Fprintf(w, `{"auth_token": "%s", "user_id": "%s"}`,
+		res.GetAuthToken(), res.GetUserId())
+
 }
 
 func (s *Server) CreateUser(w http.ResponseWriter, r *http.Request) {

@@ -151,7 +151,7 @@ func (x *CreateUserResponse) GetMessage() string {
 
 type GetUserRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        string                 `protobuf:"bytes,1,opt,name=userId,proto3" json:"userId,omitempty"`
+	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
 	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -187,9 +187,9 @@ func (*GetUserRequest) Descriptor() ([]byte, []int) {
 	return file_proto_users_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *GetUserRequest) GetUserId() string {
+func (x *GetUserRequest) GetUsername() string {
 	if x != nil {
-		return x.UserId
+		return x.Username
 	}
 	return ""
 }
@@ -203,11 +203,8 @@ func (x *GetUserRequest) GetPassword() string {
 
 type GetUserResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        string                 `protobuf:"bytes,1,opt,name=userId,proto3" json:"userId,omitempty"`
-	Username      string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
-	Email         string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
-	FirstName     string                 `protobuf:"bytes,4,opt,name=firstName,proto3" json:"firstName,omitempty"`
-	LastName      string                 `protobuf:"bytes,5,opt,name=lastName,proto3" json:"lastName,omitempty"`
+	AuthToken     string                 `protobuf:"bytes,1,opt,name=AuthToken,proto3" json:"AuthToken,omitempty"`
+	UserId        string                 `protobuf:"bytes,2,opt,name=userId,proto3" json:"userId,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -242,37 +239,16 @@ func (*GetUserResponse) Descriptor() ([]byte, []int) {
 	return file_proto_users_proto_rawDescGZIP(), []int{3}
 }
 
+func (x *GetUserResponse) GetAuthToken() string {
+	if x != nil {
+		return x.AuthToken
+	}
+	return ""
+}
+
 func (x *GetUserResponse) GetUserId() string {
 	if x != nil {
 		return x.UserId
-	}
-	return ""
-}
-
-func (x *GetUserResponse) GetUsername() string {
-	if x != nil {
-		return x.Username
-	}
-	return ""
-}
-
-func (x *GetUserResponse) GetEmail() string {
-	if x != nil {
-		return x.Email
-	}
-	return ""
-}
-
-func (x *GetUserResponse) GetFirstName() string {
-	if x != nil {
-		return x.FirstName
-	}
-	return ""
-}
-
-func (x *GetUserResponse) GetLastName() string {
-	if x != nil {
-		return x.LastName
 	}
 	return ""
 }
@@ -290,16 +266,13 @@ const file_proto_users_proto_rawDesc = "" +
 	"\bpassword\x18\x05 \x01(\tR\bpassword\"F\n" +
 	"\x12CreateUserResponse\x12\x16\n" +
 	"\x06userId\x18\x01 \x01(\tR\x06userId\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"D\n" +
-	"\x0eGetUserRequest\x12\x16\n" +
-	"\x06userId\x18\x01 \x01(\tR\x06userId\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\"\x95\x01\n" +
-	"\x0fGetUserResponse\x12\x16\n" +
-	"\x06userId\x18\x01 \x01(\tR\x06userId\x12\x1a\n" +
-	"\busername\x18\x02 \x01(\tR\busername\x12\x14\n" +
-	"\x05email\x18\x03 \x01(\tR\x05email\x12\x1c\n" +
-	"\tfirstName\x18\x04 \x01(\tR\tfirstName\x12\x1a\n" +
-	"\blastName\x18\x05 \x01(\tR\blastName2s\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"H\n" +
+	"\x0eGetUserRequest\x12\x1a\n" +
+	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\"G\n" +
+	"\x0fGetUserResponse\x12\x1c\n" +
+	"\tAuthToken\x18\x01 \x01(\tR\tAuthToken\x12\x16\n" +
+	"\x06userId\x18\x02 \x01(\tR\x06userId2s\n" +
 	"\fUsersService\x125\n" +
 	"\n" +
 	"CreateUser\x12\x12.CreateUserRequest\x1a\x13.CreateUserResponse\x12,\n" +
