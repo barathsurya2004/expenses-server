@@ -10,6 +10,7 @@ import (
 	"github.com/gorilla/mux"
 	"google.golang.org/grpc"
 
+	"github.com/barathsurya2004/expenses/client/middleware"
 	pb "github.com/barathsurya2004/expenses/proto"
 	"github.com/barathsurya2004/expenses/services/models"
 )
@@ -22,7 +23,7 @@ func RegisterRoutes(r *mux.Router, conn *grpc.ClientConn) {
 	server := &Server{Conn: conn}
 	r.HandleFunc("/create-user", server.CreateUser).Methods("POST")
 	r.HandleFunc("/get-user", server.GetUser).Methods("GET")
-	r.HandleFunc("/create-expense", server.CreateExpense).Methods("POST")
+	r.Handle("/create-expense", middleware.AuthorizationMiddleware(http.HandlerFunc(server.CreateExpense))).Methods("POST")
 }
 
 func (s *Server) GetUser(w http.ResponseWriter, r *http.Request) {
@@ -80,29 +81,10 @@ func (s *Server) CreateExpense(w http.ResponseWriter, r *http.Request) {
 	// limit total upload size to 50 MB (adjust as needed)
 	r.Body = http.MaxBytesReader(w, r.Body, 50<<20)
 
-	// helpful debug
-	log.Printf("Incoming request Content-Type: %q", r.Header.Get("Content-Type"))
-
-	// Attempt to parse multipart form (32 MB in memory max, rest to disk)
 	if err := r.ParseMultipartForm(32 << 20); err != nil {
 		log.Printf("Error parsing multipart form: %v", err)
 		http.Error(w, "Invalid multipart form", http.StatusBadRequest)
 		return
-	}
-	if r.MultipartForm != nil {
-		for k, v := range r.MultipartForm.Value {
-			log.Printf("Value field %q => %v", k, v)
-		}
-		for k, fhs := range r.MultipartForm.File {
-			for _, fh := range fhs {
-				log.Printf("File field %q => filename=%q, size=%d", k, fh.Filename, fh.Size)
-			}
-		}
-	}
-
-	// Optional: log other form values to make sure things arrived
-	for k, v := range r.MultipartForm.Value {
-		log.Printf("Form field %q => %v", k, v)
 	}
 
 	// retrieve file under the key "file"
@@ -116,7 +98,6 @@ func (s *Server) CreateExpense(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("File received: filename=%q, header=%+v", handler.Filename, handler.Header)
 
-	// create gRPC stream (unchanged)
 	pClient := pb.NewExpensesServiceClient(s.Conn)
 	ctx := r.Context()
 	stream, err := pClient.CreateExpense(ctx)
@@ -126,7 +107,7 @@ func (s *Server) CreateExpense(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	buffer := make([]byte, 64*1024) // 64 KB chunk size
+	buffer := make([]byte, 64*1024)
 	for {
 		n, err := file.Read(buffer)
 		if err != nil {
