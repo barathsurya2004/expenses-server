@@ -22,7 +22,7 @@ type Server struct {
 func RegisterRoutes(r *mux.Router, conn *grpc.ClientConn) {
 	server := &Server{Conn: conn}
 	r.HandleFunc("/create-user", server.CreateUser).Methods("POST")
-	r.HandleFunc("/get-user", server.GetUser).Methods("GET")
+	r.HandleFunc("/get-user", server.GetUser).Methods("POST")
 	r.Handle("/create-expense", middleware.AuthorizationMiddleware(conn)(http.HandlerFunc(server.CreateExpense))).Methods("POST")
 }
 
@@ -73,8 +73,8 @@ func (s *Server) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprintf(w, `{"message": "%s", "user_id": "%s"}`,
-		res.GetMessage(), res.GetUserId())
+	fmt.Fprintf(w, `{"message": "%s", "user_id": "%s",auth_token: "%s"}`,
+		res.GetMessage(), res.GetUserId(), res.GetAuthToken())
 	log.Printf("User created successfully: %s", res.GetMessage())
 }
 

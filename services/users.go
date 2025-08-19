@@ -65,9 +65,16 @@ func (s *usersServer) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 		return nil, err
 	}
 
+	authToken, err := GenToken(userId, s.db)
+	if err != nil {
+		log.Printf("Failed to generate auth token: %v", err)
+		return nil, err
+	}
+
 	return &pb.CreateUserResponse{
-		Message: "User created successfully",
-		UserId:  userId,
+		Message:   "User created successfully",
+		UserId:    userId,
+		AuthToken: authToken,
 	}, nil
 
 }
@@ -95,39 +102,10 @@ func (s *usersServer) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.
 		log.Printf("Password check successful for user %s", user.Username)
 	}
 
-	queryForCheckingAuthToken := `SELECT token, expires_at FROM token_data WHERE uuid = $1`
-	var authToken string
-	var expiresAt sql.NullTime
-	err = s.db.QueryRowContext(ctx, queryForCheckingAuthToken, user.ID).Scan(&authToken, &expiresAt)
-	if err == sql.ErrNoRows {
-		log.Printf("No auth token found for user %s", user.Username)
-		// Generate a new auth token if it doesn't exist
-		authToken = uuid.New().String()           // Replace with actual token generation logic
-		expires := time.Now().Add(24 * time.Hour) // Example: token valid for 24 hours
-		_, err = s.db.ExecContext(ctx, "INSERT INTO token_data (uuid, token, expires_at,context) VALUES ($1, $2, $3,$4)", user.ID, authToken, expires, "user_auth")
-		if err != nil {
-			log.Printf("Failed to insert auth token: %v", err)
-			return nil, err
-		}
-		log.Printf("Generated new auth token for user %s", user.Username)
-	} else if err != nil {
-		log.Printf("Failed to get auth token: %v", err)
+	authToken, err := GenToken(user.ID, s.db)
+	if err != nil {
+		log.Printf("Failed to generate auth token: %v", err)
 		return nil, err
-	} else if expiresAt.Valid && time.Now().Before(expiresAt.Time) {
-		// Token is still valid, delete and create a new one
-		_, err = s.db.ExecContext(ctx, "DELETE FROM token_data WHERE uuid = $1", user.ID)
-		if err != nil {
-			log.Printf("Failed to delete expired auth token: %v", err)
-			return nil, err
-		}
-		authToken = uuid.New().String() // Replace with actual token generation logic
-		expires := time.Now().Add(24 * time.Hour)
-		_, err = s.db.ExecContext(ctx, "INSERT INTO token_data (uuid, token, expires_at,context) VALUES ($1, $2, $3,$4)", user.ID, authToken, expires, "user_auth")
-		if err != nil {
-			log.Printf("Failed to insert new auth token: %v", err)
-			return nil, err
-		}
-		log.Printf("Deleted old token and generated new auth token for user %s", user.Username)
 	}
 
 	return &pb.GetUserResponse{
@@ -183,4 +161,28 @@ func passwordCheck(hashedPassword, password string) bool {
 		return false
 	}
 	return true
+}
+
+func GenToken(userId string, db *sql.DB) (string, error) {
+	query := `delete from token_data where uuid = $1`
+
+	_, err := db.Exec(query, userId)
+	if err != nil {
+		log.Printf("Failed to delete token: %v", err)
+		return "", err
+	}
+	newToken, err := uuid.NewV6() // Generate a new token
+	if err != nil {
+		log.Printf("Failed to generate new token: %v", err)
+		return "", err
+	}
+	expires := time.Now().Add(24 * time.Hour) // Example: token valid for 24 hours
+	_, err = db.Exec("INSERT INTO token_data (uuid, token, expires_at,context) VALUES ($1, $2, $3,$4)", userId, newToken, expires, "user_auth")
+	if err != nil {
+		log.Printf("Failed to insert new token: %v", err)
+		return "", err
+	}
+	log.Printf("Generated new token for user %s", userId)
+	return newToken.String(), nil
+
 }

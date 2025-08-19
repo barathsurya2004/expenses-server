@@ -19,7 +19,9 @@ message CreateUserRequest {
 
 message CreateUserResponse {
     string userId = 1;
-    string message = 2;
+    string authToken = 2;
+    string message = 3;
+
 }
 
 message GetUserRequest {
