@@ -23,7 +23,7 @@ func RegisterRoutes(r *mux.Router, conn *grpc.ClientConn) {
 	server := &Server{Conn: conn}
 	r.HandleFunc("/create-user", server.CreateUser).Methods("POST")
 	r.HandleFunc("/get-user", server.GetUser).Methods("GET")
-	r.Handle("/create-expense", middleware.AuthorizationMiddleware(http.HandlerFunc(server.CreateExpense))).Methods("POST")
+	r.Handle("/create-expense", middleware.AuthorizationMiddleware(conn)(http.HandlerFunc(server.CreateExpense))).Methods("POST")
 }
 
 func (s *Server) GetUser(w http.ResponseWriter, r *http.Request) {

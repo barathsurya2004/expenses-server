@@ -5,6 +5,7 @@ option go_package= "github.com/barathsurya2004/expenses/proto";
 service UsersService {
     rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
     rpc GetUser(GetUserRequest) returns (GetUserResponse);
+    rpc CheckAuthToken(CheckAuthTokenRequest) returns (CheckAuthTokenResponse);
 }
 
 message CreateUserRequest {
@@ -29,4 +30,14 @@ message GetUserRequest {
 message GetUserResponse {
     string AuthToken = 1;
     string userId = 2;
+}
+
+message CheckAuthTokenRequest {
+    string authToken = 1;
+}
+
+message CheckAuthTokenResponse {
+    bool isValid = 1;
+    string userId = 2;
+    string message = 3;
 }

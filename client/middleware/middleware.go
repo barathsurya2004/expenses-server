@@ -3,6 +3,10 @@ package middleware
 import (
 	"fmt"
 	"net/http"
+
+	pb "github.com/barathsurya2004/expenses/proto"
+
+	"google.golang.org/grpc"
 )
 
 func CorsMiddleWare(next http.Handler) http.Handler {
@@ -18,16 +22,36 @@ func CorsMiddleWare(next http.Handler) http.Handler {
 	})
 }
 
-func AuthorizationMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		token := r.Header.Get("Authorization")
-		if token == "" {
-			http.Error(w, "Unauthorized", http.StatusUnauthorized)
-			return
-		}
+func AuthorizationMiddleware(conn *grpc.ClientConn) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
 
-		fmt.Println("Authorization token:", token)
+		pClient := pb.NewUsersServiceClient(conn)
 
-		next.ServeHTTP(w, r)
-	})
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			token := r.Header.Get("Authorization")
+			if token == "" {
+				http.Error(w, "Unauthorized", http.StatusUnauthorized)
+				return
+			}
+
+			// Check the token in the database
+			fmt.Println("Checking token in the database...") // Placeholder for actual token validation logic
+			ctx := r.Context()
+			res, err := pClient.CheckAuthToken(ctx, &pb.CheckAuthTokenRequest{
+				AuthToken: token,
+			})
+			if err != nil {
+				http.Error(w, "Unauthorized", http.StatusUnauthorized)
+				return
+			}
+
+			fmt.Println("token:", token)
+			if !res.GetIsValid() {
+				http.Error(w, "Unauthorized", http.StatusUnauthorized)
+				return
+			}
+
+			next.ServeHTTP(w, r)
+		})
+	}
 }

@@ -137,6 +137,36 @@ func (s *usersServer) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.
 
 }
 
+func (s *usersServer) CheckAuthToken(ctx context.Context, req *pb.CheckAuthTokenRequest) (*pb.CheckAuthTokenResponse, error) {
+	if req.GetAuthToken() == "" {
+		return nil, fmt.Errorf("auth token is required")
+	}
+
+	var userId string
+	var message string
+
+	query := `SELECT uuid FROM token_data WHERE token = $1`
+	err := s.db.QueryRowContext(ctx, query, req.GetAuthToken()).Scan(&userId)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			message = "Invalid auth token"
+			return &pb.CheckAuthTokenResponse{
+				IsValid: false,
+				Message: message,
+			}, nil
+		}
+		log.Printf("Failed to check auth token: %v", err)
+		return nil, err
+	}
+
+	message = "Auth token is valid"
+	return &pb.CheckAuthTokenResponse{
+		IsValid: true,
+		UserId:  userId,
+		Message: message,
+	}, nil
+}
+
 func passwordHash(password string) ([]byte, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {

@@ -253,6 +253,110 @@ func (x *GetUserResponse) GetUserId() string {
 	return ""
 }
 
+type CheckAuthTokenRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AuthToken     string                 `protobuf:"bytes,1,opt,name=authToken,proto3" json:"authToken,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CheckAuthTokenRequest) Reset() {
+	*x = CheckAuthTokenRequest{}
+	mi := &file_proto_users_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CheckAuthTokenRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CheckAuthTokenRequest) ProtoMessage() {}
+
+func (x *CheckAuthTokenRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_users_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CheckAuthTokenRequest.ProtoReflect.Descriptor instead.
+func (*CheckAuthTokenRequest) Descriptor() ([]byte, []int) {
+	return file_proto_users_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *CheckAuthTokenRequest) GetAuthToken() string {
+	if x != nil {
+		return x.AuthToken
+	}
+	return ""
+}
+
+type CheckAuthTokenResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	IsValid       bool                   `protobuf:"varint,1,opt,name=isValid,proto3" json:"isValid,omitempty"`
+	UserId        string                 `protobuf:"bytes,2,opt,name=userId,proto3" json:"userId,omitempty"`
+	Message       string                 `protobuf:"bytes,3,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CheckAuthTokenResponse) Reset() {
+	*x = CheckAuthTokenResponse{}
+	mi := &file_proto_users_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CheckAuthTokenResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CheckAuthTokenResponse) ProtoMessage() {}
+
+func (x *CheckAuthTokenResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_users_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CheckAuthTokenResponse.ProtoReflect.Descriptor instead.
+func (*CheckAuthTokenResponse) Descriptor() ([]byte, []int) {
+	return file_proto_users_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *CheckAuthTokenResponse) GetIsValid() bool {
+	if x != nil {
+		return x.IsValid
+	}
+	return false
+}
+
+func (x *CheckAuthTokenResponse) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *CheckAuthTokenResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
 var File_proto_users_proto protoreflect.FileDescriptor
 
 const file_proto_users_proto_rawDesc = "" +
@@ -272,11 +376,18 @@ const file_proto_users_proto_rawDesc = "" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\"G\n" +
 	"\x0fGetUserResponse\x12\x1c\n" +
 	"\tAuthToken\x18\x01 \x01(\tR\tAuthToken\x12\x16\n" +
-	"\x06userId\x18\x02 \x01(\tR\x06userId2s\n" +
+	"\x06userId\x18\x02 \x01(\tR\x06userId\"5\n" +
+	"\x15CheckAuthTokenRequest\x12\x1c\n" +
+	"\tauthToken\x18\x01 \x01(\tR\tauthToken\"d\n" +
+	"\x16CheckAuthTokenResponse\x12\x18\n" +
+	"\aisValid\x18\x01 \x01(\bR\aisValid\x12\x16\n" +
+	"\x06userId\x18\x02 \x01(\tR\x06userId\x12\x18\n" +
+	"\amessage\x18\x03 \x01(\tR\amessage2\xb6\x01\n" +
 	"\fUsersService\x125\n" +
 	"\n" +
 	"CreateUser\x12\x12.CreateUserRequest\x1a\x13.CreateUserResponse\x12,\n" +
-	"\aGetUser\x12\x0f.GetUserRequest\x1a\x10.GetUserResponseB+Z)github.com/barathsurya2004/expenses/protob\x06proto3"
+	"\aGetUser\x12\x0f.GetUserRequest\x1a\x10.GetUserResponse\x12A\n" +
+	"\x0eCheckAuthToken\x12\x16.CheckAuthTokenRequest\x1a\x17.CheckAuthTokenResponseB+Z)github.com/barathsurya2004/expenses/protob\x06proto3"
 
 var (
 	file_proto_users_proto_rawDescOnce sync.Once
@@ -290,20 +401,24 @@ func file_proto_users_proto_rawDescGZIP() []byte {
 	return file_proto_users_proto_rawDescData
 }
 
-var file_proto_users_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_proto_users_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_proto_users_proto_goTypes = []any{
-	(*CreateUserRequest)(nil),  // 0: CreateUserRequest
-	(*CreateUserResponse)(nil), // 1: CreateUserResponse
-	(*GetUserRequest)(nil),     // 2: GetUserRequest
-	(*GetUserResponse)(nil),    // 3: GetUserResponse
+	(*CreateUserRequest)(nil),      // 0: CreateUserRequest
+	(*CreateUserResponse)(nil),     // 1: CreateUserResponse
+	(*GetUserRequest)(nil),         // 2: GetUserRequest
+	(*GetUserResponse)(nil),        // 3: GetUserResponse
+	(*CheckAuthTokenRequest)(nil),  // 4: CheckAuthTokenRequest
+	(*CheckAuthTokenResponse)(nil), // 5: CheckAuthTokenResponse
 }
 var file_proto_users_proto_depIdxs = []int32{
 	0, // 0: UsersService.CreateUser:input_type -> CreateUserRequest
 	2, // 1: UsersService.GetUser:input_type -> GetUserRequest
-	1, // 2: UsersService.CreateUser:output_type -> CreateUserResponse
-	3, // 3: UsersService.GetUser:output_type -> GetUserResponse
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
+	4, // 2: UsersService.CheckAuthToken:input_type -> CheckAuthTokenRequest
+	1, // 3: UsersService.CreateUser:output_type -> CreateUserResponse
+	3, // 4: UsersService.GetUser:output_type -> GetUserResponse
+	5, // 5: UsersService.CheckAuthToken:output_type -> CheckAuthTokenResponse
+	3, // [3:6] is the sub-list for method output_type
+	0, // [0:3] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -320,7 +435,7 @@ func file_proto_users_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_users_proto_rawDesc), len(file_proto_users_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
