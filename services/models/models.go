@@ -48,3 +48,9 @@ type Item struct {
 	Quantity int     `json:"quantity"`
 	Category string  `json:"category"`
 }
+
+type HeatMapDay struct {
+	Day      string `json:"day"`
+	Amount   int    `json:"amount"`
+	Currency string `json:"currency"`
+}

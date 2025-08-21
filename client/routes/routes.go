@@ -24,6 +24,7 @@ func RegisterRoutes(r *mux.Router, conn *grpc.ClientConn) {
 	r.HandleFunc("/create-user", server.CreateUser).Methods("POST")
 	r.HandleFunc("/get-user", server.GetUser).Methods("POST")
 	r.Handle("/create-expense", middleware.AuthorizationMiddleware(conn)(http.HandlerFunc(server.CreateExpense))).Methods("POST")
+	r.Handle("/get-heatmap-data", middleware.AuthorizationMiddleware(conn)(http.HandlerFunc(server.GetHeatMapData))).Methods("GET")
 }
 
 func (s *Server) GetUser(w http.ResponseWriter, r *http.Request) {
@@ -136,4 +137,28 @@ func (s *Server) CreateExpense(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(w, response.GetStatus())
+}
+
+func (s *Server) GetHeatMapData(w http.ResponseWriter, r *http.Request) {
+	pbClient := pb.NewExpensesServiceClient(s.Conn)
+	ctx := r.Context()
+	res, err := pbClient.GetHeatMapData(ctx, &pb.GetHeatMapDataRequest{
+		UserId: "01f07c5a-f6c2-652b-9f5a-00155d4c4438",
+	})
+	if err != nil {
+		log.Printf("Error getting heatmap data: %v", err)
+		http.Error(w, "Failed to get heatmap data", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+
+	if err := json.NewEncoder(w).Encode(res.GetHeatMapData()); err != nil {
+		log.Printf("Error encoding heatmap data: %v", err)
+		http.Error(w, "Failed to encode heatmap data", http.StatusInternalServerError)
+		return
+	}
+	log.Printf("Heatmap data retrieved successfully")
+	log.Printf("Heatmap data: %v", res.GetHeatMapData())
+	log.Printf("Heatmap data length: %d", len(res.GetHeatMapData()))
+
 }

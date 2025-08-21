@@ -4,6 +4,7 @@ option go_package = "github.com/barathsurya2004/expenses/proto";
 
 service ExpensesService {
   rpc CreateExpense(stream CreateExpenseRequest) returns (CreateExpenseResponse);
+  rpc GetHeatMapData(GetHeatMapDataRequest) returns (GetHeatMapDataResponse);
 }
 
 message CreateExpenseRequest {
@@ -12,4 +13,17 @@ message CreateExpenseRequest {
 
 message CreateExpenseResponse {
   string status = 1;
+}
+
+message GetHeatMapDataRequest {
+  string user_id = 1;
+}
+message GetHeatMapDataResponse {
+  repeated HeatMapData heat_map_data = 1;
+}
+
+message HeatMapData {
+  string day = 1;
+  double amount = 2;
+  string currency = 3;
 }

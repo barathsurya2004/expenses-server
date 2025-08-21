@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/joho/godotenv"
 	"google.golang.org/genai"
@@ -138,7 +139,7 @@ func (s *expenseServer) WriteExpenseToDB(expense models.Transaction) error {
 
 	query := `INSERT INTO expense_data (uuid,date_and_time, place, mode_of_payment, amount, currency, category) VALUES ($1, $2, $3, $4, $5, $6, $7)`
 
-	uuid := "01f07b63-fa0f-6ed9-b910-00155d4c459b"
+	uuid := "01f07c5a-f6c2-652b-9f5a-00155d4c4438"
 
 	_, err := s.db.ExecContext(context.Background(), query,
 		uuid,
@@ -152,4 +153,47 @@ func (s *expenseServer) WriteExpenseToDB(expense models.Transaction) error {
 
 	return err
 
+}
+
+func (s *expenseServer) GetHeatMapData(ctx context.Context, req *pb.GetHeatMapDataRequest) (*pb.GetHeatMapDataResponse, error) {
+	log.Println("Fetching heat map data...")
+
+	query := `SELECT date_and_time, amount, currency FROM expense_data WHERE uuid = $1`
+
+	rows, err := s.db.QueryContext(ctx, query, req.GetUserId())
+	if err != nil {
+		log.Printf("Error querying heat map data: %v", err)
+		return nil, err
+	}
+	defer rows.Close()
+	var heatMapData []*pb.HeatMapData
+	for rows.Next() {
+		var date time.Time
+		var amount float64
+		var currency string
+		if err := rows.Scan(&date, &amount, &currency); err != nil {
+			log.Printf("Error scanning heat map data: %v", err)
+			return nil, err
+		}
+
+		day := date.Weekday().String()
+
+		heatMapData = append(heatMapData, &pb.HeatMapData{
+			Day:      day,
+			Amount:   amount,
+			Currency: currency,
+		})
+	}
+	if err := rows.Err(); err != nil {
+		log.Printf("Error iterating over heat map data rows: %v", err)
+		return nil, err
+	}
+	log.Println("Heat map data fetched successfully.")
+
+	response := &pb.GetHeatMapDataResponse{
+		HeatMapData: heatMapData,
+	}
+
+	log.Println("Heat map data fetched successfully.")
+	return response, nil
 }

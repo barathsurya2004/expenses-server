@@ -109,6 +109,154 @@ func (x *CreateExpenseResponse) GetStatus() string {
 	return ""
 }
 
+type GetHeatMapDataRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetHeatMapDataRequest) Reset() {
+	*x = GetHeatMapDataRequest{}
+	mi := &file_proto_expenses_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetHeatMapDataRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetHeatMapDataRequest) ProtoMessage() {}
+
+func (x *GetHeatMapDataRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_expenses_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetHeatMapDataRequest.ProtoReflect.Descriptor instead.
+func (*GetHeatMapDataRequest) Descriptor() ([]byte, []int) {
+	return file_proto_expenses_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *GetHeatMapDataRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+type GetHeatMapDataResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	HeatMapData   []*HeatMapData         `protobuf:"bytes,1,rep,name=heat_map_data,json=heatMapData,proto3" json:"heat_map_data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetHeatMapDataResponse) Reset() {
+	*x = GetHeatMapDataResponse{}
+	mi := &file_proto_expenses_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetHeatMapDataResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetHeatMapDataResponse) ProtoMessage() {}
+
+func (x *GetHeatMapDataResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_expenses_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetHeatMapDataResponse.ProtoReflect.Descriptor instead.
+func (*GetHeatMapDataResponse) Descriptor() ([]byte, []int) {
+	return file_proto_expenses_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *GetHeatMapDataResponse) GetHeatMapData() []*HeatMapData {
+	if x != nil {
+		return x.HeatMapData
+	}
+	return nil
+}
+
+type HeatMapData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Day           string                 `protobuf:"bytes,1,opt,name=day,proto3" json:"day,omitempty"`
+	Amount        float64                `protobuf:"fixed64,2,opt,name=amount,proto3" json:"amount,omitempty"`
+	Currency      string                 `protobuf:"bytes,3,opt,name=currency,proto3" json:"currency,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *HeatMapData) Reset() {
+	*x = HeatMapData{}
+	mi := &file_proto_expenses_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *HeatMapData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*HeatMapData) ProtoMessage() {}
+
+func (x *HeatMapData) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_expenses_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use HeatMapData.ProtoReflect.Descriptor instead.
+func (*HeatMapData) Descriptor() ([]byte, []int) {
+	return file_proto_expenses_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *HeatMapData) GetDay() string {
+	if x != nil {
+		return x.Day
+	}
+	return ""
+}
+
+func (x *HeatMapData) GetAmount() float64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+func (x *HeatMapData) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
 var File_proto_expenses_proto protoreflect.FileDescriptor
 
 const file_proto_expenses_proto_rawDesc = "" +
@@ -117,9 +265,18 @@ const file_proto_expenses_proto_rawDesc = "" +
 	"\x14CreateExpenseRequest\x12\x16\n" +
 	"\x06chunks\x18\x01 \x01(\fR\x06chunks\"/\n" +
 	"\x15CreateExpenseResponse\x12\x16\n" +
-	"\x06status\x18\x01 \x01(\tR\x06status2S\n" +
+	"\x06status\x18\x01 \x01(\tR\x06status\"0\n" +
+	"\x15GetHeatMapDataRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\"J\n" +
+	"\x16GetHeatMapDataResponse\x120\n" +
+	"\rheat_map_data\x18\x01 \x03(\v2\f.HeatMapDataR\vheatMapData\"S\n" +
+	"\vHeatMapData\x12\x10\n" +
+	"\x03day\x18\x01 \x01(\tR\x03day\x12\x16\n" +
+	"\x06amount\x18\x02 \x01(\x01R\x06amount\x12\x1a\n" +
+	"\bcurrency\x18\x03 \x01(\tR\bcurrency2\x96\x01\n" +
 	"\x0fExpensesService\x12@\n" +
-	"\rCreateExpense\x12\x15.CreateExpenseRequest\x1a\x16.CreateExpenseResponse(\x01B+Z)github.com/barathsurya2004/expenses/protob\x06proto3"
+	"\rCreateExpense\x12\x15.CreateExpenseRequest\x1a\x16.CreateExpenseResponse(\x01\x12A\n" +
+	"\x0eGetHeatMapData\x12\x16.GetHeatMapDataRequest\x1a\x17.GetHeatMapDataResponseB+Z)github.com/barathsurya2004/expenses/protob\x06proto3"
 
 var (
 	file_proto_expenses_proto_rawDescOnce sync.Once
@@ -133,19 +290,25 @@ func file_proto_expenses_proto_rawDescGZIP() []byte {
 	return file_proto_expenses_proto_rawDescData
 }
 
-var file_proto_expenses_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_proto_expenses_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_proto_expenses_proto_goTypes = []any{
-	(*CreateExpenseRequest)(nil),  // 0: CreateExpenseRequest
-	(*CreateExpenseResponse)(nil), // 1: CreateExpenseResponse
+	(*CreateExpenseRequest)(nil),   // 0: CreateExpenseRequest
+	(*CreateExpenseResponse)(nil),  // 1: CreateExpenseResponse
+	(*GetHeatMapDataRequest)(nil),  // 2: GetHeatMapDataRequest
+	(*GetHeatMapDataResponse)(nil), // 3: GetHeatMapDataResponse
+	(*HeatMapData)(nil),            // 4: HeatMapData
 }
 var file_proto_expenses_proto_depIdxs = []int32{
-	0, // 0: ExpensesService.CreateExpense:input_type -> CreateExpenseRequest
-	1, // 1: ExpensesService.CreateExpense:output_type -> CreateExpenseResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	4, // 0: GetHeatMapDataResponse.heat_map_data:type_name -> HeatMapData
+	0, // 1: ExpensesService.CreateExpense:input_type -> CreateExpenseRequest
+	2, // 2: ExpensesService.GetHeatMapData:input_type -> GetHeatMapDataRequest
+	1, // 3: ExpensesService.CreateExpense:output_type -> CreateExpenseResponse
+	3, // 4: ExpensesService.GetHeatMapData:output_type -> GetHeatMapDataResponse
+	3, // [3:5] is the sub-list for method output_type
+	1, // [1:3] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_proto_expenses_proto_init() }
@@ -159,7 +322,7 @@ func file_proto_expenses_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_expenses_proto_rawDesc), len(file_proto_expenses_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
