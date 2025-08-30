@@ -19,8 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ExpensesService_CreateExpense_FullMethodName  = "/ExpensesService/CreateExpense"
-	ExpensesService_GetHeatMapData_FullMethodName = "/ExpensesService/GetHeatMapData"
+	ExpensesService_CreateExpense_FullMethodName    = "/ExpensesService/CreateExpense"
+	ExpensesService_GetHeatMapData_FullMethodName   = "/ExpensesService/GetHeatMapData"
+	ExpensesService_GetSpendingTypes_FullMethodName = "/ExpensesService/GetSpendingTypes"
 )
 
 // ExpensesServiceClient is the client API for ExpensesService service.
@@ -29,6 +30,7 @@ const (
 type ExpensesServiceClient interface {
 	CreateExpense(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[CreateExpenseRequest, CreateExpenseResponse], error)
 	GetHeatMapData(ctx context.Context, in *GetHeatMapDataRequest, opts ...grpc.CallOption) (*GetHeatMapDataResponse, error)
+	GetSpendingTypes(ctx context.Context, in *GetSpendingTypesRequest, opts ...grpc.CallOption) (*GetSpendingTypesResponse, error)
 }
 
 type expensesServiceClient struct {
@@ -62,12 +64,23 @@ func (c *expensesServiceClient) GetHeatMapData(ctx context.Context, in *GetHeatM
 	return out, nil
 }
 
+func (c *expensesServiceClient) GetSpendingTypes(ctx context.Context, in *GetSpendingTypesRequest, opts ...grpc.CallOption) (*GetSpendingTypesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetSpendingTypesResponse)
+	err := c.cc.Invoke(ctx, ExpensesService_GetSpendingTypes_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ExpensesServiceServer is the server API for ExpensesService service.
 // All implementations must embed UnimplementedExpensesServiceServer
 // for forward compatibility.
 type ExpensesServiceServer interface {
 	CreateExpense(grpc.ClientStreamingServer[CreateExpenseRequest, CreateExpenseResponse]) error
 	GetHeatMapData(context.Context, *GetHeatMapDataRequest) (*GetHeatMapDataResponse, error)
+	GetSpendingTypes(context.Context, *GetSpendingTypesRequest) (*GetSpendingTypesResponse, error)
 	mustEmbedUnimplementedExpensesServiceServer()
 }
 
@@ -83,6 +96,9 @@ func (UnimplementedExpensesServiceServer) CreateExpense(grpc.ClientStreamingServ
 }
 func (UnimplementedExpensesServiceServer) GetHeatMapData(context.Context, *GetHeatMapDataRequest) (*GetHeatMapDataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetHeatMapData not implemented")
+}
+func (UnimplementedExpensesServiceServer) GetSpendingTypes(context.Context, *GetSpendingTypesRequest) (*GetSpendingTypesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSpendingTypes not implemented")
 }
 func (UnimplementedExpensesServiceServer) mustEmbedUnimplementedExpensesServiceServer() {}
 func (UnimplementedExpensesServiceServer) testEmbeddedByValue()                         {}
@@ -130,6 +146,24 @@ func _ExpensesService_GetHeatMapData_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ExpensesService_GetSpendingTypes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSpendingTypesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ExpensesServiceServer).GetSpendingTypes(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ExpensesService_GetSpendingTypes_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ExpensesServiceServer).GetSpendingTypes(ctx, req.(*GetSpendingTypesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ExpensesService_ServiceDesc is the grpc.ServiceDesc for ExpensesService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -140,6 +174,10 @@ var ExpensesService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetHeatMapData",
 			Handler:    _ExpensesService_GetHeatMapData_Handler,
+		},
+		{
+			MethodName: "GetSpendingTypes",
+			Handler:    _ExpensesService_GetSpendingTypes_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

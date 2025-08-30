@@ -25,6 +25,7 @@ func RegisterRoutes(r *mux.Router, conn *grpc.ClientConn) {
 	r.HandleFunc("/get-user", server.GetUser).Methods("POST")
 	r.Handle("/create-expense", middleware.AuthorizationMiddleware(conn)(http.HandlerFunc(server.CreateExpense))).Methods("POST")
 	r.Handle("/get-heatmap-data", middleware.AuthorizationMiddleware(conn)(http.HandlerFunc(server.GetHeatMapData))).Methods("GET")
+	r.Handle("/get-spending-types", middleware.AuthorizationMiddleware(conn)(http.HandlerFunc(server.GetSpendingTypes))).Methods("GET")
 }
 
 func (s *Server) GetUser(w http.ResponseWriter, r *http.Request) {
@@ -161,4 +162,29 @@ func (s *Server) GetHeatMapData(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Heatmap data: %v", res.GetHeatMapData())
 	log.Printf("Heatmap data length: %d", len(res.GetHeatMapData()))
 
+}
+
+func (s *Server) GetSpendingTypes(w http.ResponseWriter, r *http.Request) {
+	pbClient := pb.NewExpensesServiceClient(s.Conn)
+	ctx := r.Context()
+
+	res, err := pbClient.GetSpendingTypes(ctx, &pb.GetSpendingTypesRequest{
+		UserId: "01f07c5a-f6c2-652b-9f5a-00155d4c4438",
+	})
+	if err != nil {
+		log.Printf("Error getting spending types data: %v", err)
+		http.Error(w, "Failed to get spending types data", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(res.GetSpendingTypes()); err != nil {
+		log.Printf("Error encoding spending types data: %v", err)
+		http.Error(w, "Failed to encode spending types data", http.StatusInternalServerError)
+		return
+	}
+
+	log.Printf("Spending types data retrieved successfully")
+	log.Printf("Spending types data: %v", res.GetSpendingTypes())
+	log.Printf("Spending types data length: %d", len(res.GetSpendingTypes()))
 }

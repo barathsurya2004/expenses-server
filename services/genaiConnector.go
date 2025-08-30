@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -89,6 +90,7 @@ func (s *expenseServer) CreateExpense(stream pb.ExpensesService_CreateExpenseSer
 	err = json.Unmarshal([]byte(responseText), &expense)
 	if err != nil {
 		log.Printf("Error parsing JSON response: %v", err)
+		return err
 	}
 
 	// Write the expense data to the database.
@@ -136,6 +138,14 @@ func genAI(image []byte, prompt string) (string, error) {
 }
 
 func (s *expenseServer) WriteExpenseToDB(expense models.Transaction) error {
+	fmt.Println(
+		expense.TransactionDetails.TotalAmount,
+		expense.MerchantDetails.Name,
+		expense.TransactionDetails.DateTime,
+		expense.TransactionDetails.Currency,
+		expense.TransactionDetails.PaymentMethod,
+		expense.SpendingCategory,
+	)
 
 	query := `INSERT INTO expense_data (uuid,date_and_time, place, mode_of_payment, amount, currency, category) VALUES ($1, $2, $3, $4, $5, $6, $7)`
 
@@ -195,5 +205,45 @@ func (s *expenseServer) GetHeatMapData(ctx context.Context, req *pb.GetHeatMapDa
 	}
 
 	log.Println("Heat map data fetched successfully.")
+	return response, nil
+}
+
+func (s *expenseServer) GetSpendingTypes(ctx context.Context, req *pb.GetSpendingTypesRequest) (*pb.GetSpendingTypesResponse, error) {
+	log.Println("Fetching spending types data...")
+
+	query := `SELECT category, SUM(amount) as total_spent FROM expense_data WHERE uuid = $1 GROUP BY category ORDER BY total_spent DESC LIMIT 5`
+
+	rows, err := s.db.QueryContext(ctx, query, req.GetUserId())
+	if err != nil {
+		log.Printf("Error querying spending types data: %v", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var spendingTypes []*pb.SpendingType
+	for rows.Next() {
+		var category string
+		var totalSpent float64
+		if err := rows.Scan(&category, &totalSpent); err != nil {
+			log.Printf("Error scanning spending types data: %v", err)
+			return nil, err
+		}
+
+		spendingTypes = append(spendingTypes, &pb.SpendingType{
+			Type:  category,
+			Spent: totalSpent,
+		})
+	}
+	if err := rows.Err(); err != nil {
+		log.Printf("Error iterating over spending types data rows: %v", err)
+		return nil, err
+	}
+
+	log.Println("Spending types data fetched successfully.")
+
+	response := &pb.GetSpendingTypesResponse{
+		SpendingTypes: spendingTypes,
+	}
+
 	return response, nil
 }

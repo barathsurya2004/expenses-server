@@ -5,6 +5,7 @@ option go_package = "github.com/barathsurya2004/expenses/proto";
 service ExpensesService {
   rpc CreateExpense(stream CreateExpenseRequest) returns (CreateExpenseResponse);
   rpc GetHeatMapData(GetHeatMapDataRequest) returns (GetHeatMapDataResponse);
+  rpc GetSpendingTypes(GetSpendingTypesRequest) returns (GetSpendingTypesResponse);
 }
 
 message CreateExpenseRequest {
@@ -26,4 +27,17 @@ message HeatMapData {
   string day = 1;
   double amount = 2;
   string currency = 3;
+}
+
+message GetSpendingTypesRequest {
+  string user_id = 1;
+}
+
+message SpendingType {
+  string type = 1;
+  double spent = 2;
+}
+
+message GetSpendingTypesResponse {
+  repeated SpendingType spending_types = 1;
 }
